@@ -2,9 +2,9 @@ package com.example.order;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
+import org.junit.jupiter.api.Tag;
 import static org.junit.jupiter.api.Assertions.*;
-
+@Tag("slow")
 public class ExcelOrderParameterizedTest {
 
     @ParameterizedTest(name = "[Valid] {0} - expected={8}")
