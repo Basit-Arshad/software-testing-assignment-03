@@ -4,42 +4,48 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InventoryService {
+
     private final Map<String, Integer> stock = new HashMap<>();
 
     public void addStock(String productId, int quantity) {
-        if (productId == null || productId.isBlank()) {
-            throw new IllegalArgumentException("Product id cannot be null or blank");
-        }
-        if (quantity < 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
-        }
+        validateProductId(productId);
+        validateQuantity(quantity);
 
         stock.put(productId, stock.getOrDefault(productId, 0) + quantity);
     }
 
-    public boolean isAvailable(String productId, int quantity) {
-        if (productId == null || productId.isBlank()) {
-            throw new IllegalArgumentException("Product id cannot be null or blank");
-        }
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than zero");
-        }
+    public int getStock(String productId) {
+        validateProductId(productId);
+        return stock.getOrDefault(productId, 0);
+    }
 
-        return stock.getOrDefault(productId, 0) >= quantity;
+    public boolean isAvailable(String productId, int quantity) {
+        validateProductId(productId);
+        validateQuantity(quantity);
+
+        return getStock(productId) >= quantity;
     }
 
     public void reserveStock(String productId, int quantity) {
+        validateProductId(productId);
+        validateQuantity(quantity);
+
         if (!isAvailable(productId, quantity)) {
-            throw new IllegalStateException("Insufficient stock");
+            throw new IllegalStateException("Insufficient stock for product: " + productId);
         }
 
         stock.put(productId, stock.get(productId) - quantity);
     }
 
-    public int getStock(String productId) {
-        if (productId == null || productId.isBlank()) {
-            throw new IllegalArgumentException("Product id cannot be null or blank");
+    private void validateProductId(String productId) {
+        if (productId == null || productId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Product ID cannot be null or blank");
         }
-        return stock.getOrDefault(productId, 0);
+    }
+
+    private void validateQuantity(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
     }
 }
